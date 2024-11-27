@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: emaratech-backend-dev
+  namespace: argocd
+spec:
+  project: emaratech
+  source:
+    repoURL: https://github.com/horizonsventure/gitops.git # Your Git repository
+    path: helm/emaratech  # Path to the Helm chart in the repo
+    targetRevision: master  # Branch or tag in your Git repo
+    chart: ''
+    helm:
+      valueFiles:
+        - ../../argocd/emaratech/dev/backend/values.yaml  # Path relative to the `path`
+      parameters:
+        - name: image.tag
+          value: "latest"
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: emartech-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
